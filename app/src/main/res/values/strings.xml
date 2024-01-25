@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Weather App CD</string>
+    <string name="today">Today</string>
+    <string name="next_7_days"><![CDATA[Next 7 days >]]></string>
+</resources>
