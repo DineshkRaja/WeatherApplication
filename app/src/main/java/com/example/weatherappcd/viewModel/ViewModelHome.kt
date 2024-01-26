@@ -1,5 +1,6 @@
 package com.example.weatherappcd.viewModel
 
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -18,9 +19,9 @@ class ViewModelHome : ViewModel() {
     private val _throwable = MutableLiveData<Throwable>()
     val throwableData: LiveData<Throwable> get() = _throwable
 
-    fun fetchWeatherData() {
+    fun fetchWeatherData(lat: Double, lon: Double) {
         viewModelScope.launch {
-            val result = weatherHourlyRepository.fetchWeatherData()
+            val result = weatherHourlyRepository.fetchWeatherData(lat, lon)
 
             result.onSuccess {
                 _weatherData.value = it

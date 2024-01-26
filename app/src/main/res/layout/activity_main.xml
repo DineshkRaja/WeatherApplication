@@ -52,6 +52,19 @@
                 android:layout_marginTop="16dp"/>
 
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/weatherLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="N/A"
+                android:drawablePadding="5dp"
+                android:layout_gravity="center_horizontal"
+                android:drawableStart="@drawable/location"
+                android:textColor="@color/text_title_color"
+                android:textSize="18sp"
+                android:textAlignment="center"
+                android:layout_marginTop="16dp"/>
+
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/weatherTemp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

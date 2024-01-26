@@ -14,12 +14,10 @@ class InternetConnectionCallback : ConnectivityManager.NetworkCallback() {
     override fun onAvailable(network: Network) {
         super.onAvailable(network)
         _isConnected.postValue(true)
-        Log.d("InternetCheck", "Internet is available.")
     }
 
     override fun onLost(network: Network) {
         super.onLost(network)
         _isConnected.postValue(false)
-        Log.d("InternetCheck", "Internet is not available.")
     }
 }

@@ -8,19 +8,20 @@ import kotlinx.coroutines.coroutineScope
 import retrofit2.HttpException
 
 class WeatherHourlyRepository {
-    suspend fun fetchWeatherData(): Result<WeatherHourlyResponse?> = coroutineScope {
-        try {
-            val deferredResult = async(Dispatchers.IO) {
-                RetrofitBuilder.apiService.getWeatherData(
-                    11.022542,
-                    76.923169
-                )
+    suspend fun fetchWeatherData(lat: Double, lon: Double): Result<WeatherHourlyResponse?> =
+        coroutineScope {
+            try {
+                val deferredResult = async(Dispatchers.IO) {
+                    RetrofitBuilder.apiService.getWeatherData(
+                        lat,
+                        lon
+                    )
+                }
+                Result.success(deferredResult.await().body())
+            } catch (e: HttpException) {
+                Result.failure(e)
+            } catch (e: Exception) {
+                Result.failure(e)
             }
-            Result.success(deferredResult.await().body())
-        } catch (e: HttpException) {
-            Result.failure(e)
-        } catch (e: Exception) {
-            Result.failure(e)
         }
-    }
 }

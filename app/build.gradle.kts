@@ -94,4 +94,8 @@ dependencies {
 
     //Lottie Animation
     implementation("com.airbnb.android:lottie:$lottieVersion")
+
+    //Location
+    implementation("com.google.android.gms:play-services-location:21.1.0")
+
 }
