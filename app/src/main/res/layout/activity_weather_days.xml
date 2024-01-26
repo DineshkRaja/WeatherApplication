@@ -5,8 +5,6 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingTop="40dp"
-    android:paddingStart="12dp"
-    android:paddingEnd="12dp"
     android:background="@color/background_color"
     tools:context=".view.WeatherDaysActivity">
 
@@ -14,7 +12,7 @@
         android:id="@+id/weatherDaysBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
+        android:layout_marginStart="20dp"
         android:background="@drawable/gradient_background_round"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
@@ -23,9 +21,9 @@
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="20dp"
-        android:layout_marginEnd="6dp"
+        android:layout_marginEnd="16dp"
         android:background="@drawable/gradient_background_banner"
         android:elevation="5dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -41,8 +39,10 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.airbnb.lottie.LottieAnimationView
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:id="@+id/futureWeatherAnimation"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="5dp"
             app:layout_constraintBottom_toBottomOf="@+id/bubble"
             app:layout_constraintEnd_toEndOf="@+id/bubble"
             app:layout_constraintStart_toStartOf="parent"
@@ -64,15 +64,15 @@
                 android:id="@+id/selectedDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Saturday"
+                android:text="@string/n_a"
                 android:textColor="@color/white"
-                android:textSize="30sp" />
+                android:textSize="25sp" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/selectedTemp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="35"
+                android:text="@string/n_a"
                 android:textColor="@color/white"
                 android:textSize="50sp"
                 android:textStyle="bold" />
@@ -81,7 +81,7 @@
                 android:id="@+id/selectedWeatherStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Saturday"
+                android:text="@string/n_a"
                 android:textColor="@color/white"
                 android:textSize="30sp" />
 
@@ -110,15 +110,17 @@
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:background="@drawable/rain"
+                    android:background="@drawable/sea"
+                    android:layout_gravity="center"
                     android:backgroundTint="@color/white" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="match_parent"
+                    android:id="@+id/seaLevelText"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="30%"
-                    android:textAlignment="center"
+                    android:text="@string/n_a"
+                    android:layout_gravity="center"
                     android:textColor="@color/white"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -137,14 +139,16 @@
                     android:layout_width="45dp"
                     android:layout_height="45dp"
                     android:background="@drawable/wind"
+                    android:layout_gravity="center"
                     android:backgroundTint="@color/white" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="match_parent"
+                    android:id="@+id/windText"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="30%"
-                    android:textAlignment="center"
+                    android:text="@string/n_a"
+                    android:layout_gravity="center"
                     android:textColor="@color/white"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -163,14 +167,16 @@
                     android:layout_width="45dp"
                     android:layout_height="45dp"
                     android:background="@drawable/humidity"
+                    android:layout_gravity="center"
                     android:backgroundTint="@color/white" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="match_parent"
+                    android:id="@+id/humidityText"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="30%"
-                    android:textAlignment="center"
+                    android:text="@string/n_a"
+                    android:layout_gravity="center"
                     android:textColor="@color/white"
                     android:textStyle="bold" />
 
@@ -187,8 +193,10 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="12dp"
-        android:clipToPadding="true"
+        android:clipToPadding="false"
         android:paddingBottom="15dp"
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp"
         tools:itemCount="7"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:orientation="vertical"

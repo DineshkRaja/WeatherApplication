@@ -1,17 +1,19 @@
 package com.example.weatherappcd.viewModel
 
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherappcd.view.model.WeatherHourlyResponse
-import com.example.weatherappcd.view.repository.WeatherHourlyRepository
+import com.example.weatherappcd.networking.repository.WeatherHourlyRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ViewModelHome : ViewModel() {
-
-    private var weatherHourlyRepository = WeatherHourlyRepository()
+@HiltViewModel
+class ViewModelHome @Inject constructor(
+    private val weatherHourlyRepository: WeatherHourlyRepository
+) : ViewModel() {
 
     private val _weatherData = MutableLiveData<WeatherHourlyResponse>()
     val weatherData: LiveData<WeatherHourlyResponse> get() = _weatherData

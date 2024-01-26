@@ -3,48 +3,49 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="100dp"
     android:layout_margin="8dp"
-    android:elevation="5dp"
+    android:elevation="3dp"
     android:background="@drawable/background_white"
     android:layout_height="wrap_content">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:background="?attr/selectableItemBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/hourTextView"
+            android:id="@+id/weatherDayStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
+            android:layout_marginTop="15dp"
             android:textSize="15sp"
             android:textColor="@color/text_title_color"
             android:layout_gravity="center"
-            android:text="9 AM" />
+            android:text="@string/n_a" />
 
         <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="60dp"
+            android:id="@+id/weatherDayStatusImage"
+            android:layout_width="80dp"
             android:layout_height="60dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="20dp"
             android:layout_marginBottom="5dp"
-            android:layout_gravity="center"
-            android:background="@drawable/ic_rainshower" />
+            android:layout_gravity="center" />
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/weatherDayTemp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="20dp"
             android:textSize="17sp"
             android:textStyle="bold"
             android:textColor="@color/text_title_color"
             android:layout_gravity="center"
-            android:text="70" />
+            android:text="@string/n_a" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

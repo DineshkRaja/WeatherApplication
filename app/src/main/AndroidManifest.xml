@@ -4,12 +4,14 @@
     <!-- internet permission -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <!--Location Permission-->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <uses-feature android:name="android.hardware.location.gps" />
 
     <application
+        android:name=".WeatherApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -22,7 +24,7 @@
         <activity
             android:name=".view.WeatherDaysActivity"
             android:exported="false"
-            android:theme="@style/Theme.WeatherAppCD.NoActionBar"/>
+            android:theme="@style/Theme.WeatherAppCD" />
         <activity
             android:name=".view.MainActivity"
             android:exported="true">

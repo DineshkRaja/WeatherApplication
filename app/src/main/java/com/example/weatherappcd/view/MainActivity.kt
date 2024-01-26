@@ -16,7 +16,6 @@ import android.provider.Settings
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -25,12 +24,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat.*
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.lifecycleScope
 import com.example.weatherappcd.R
 import com.example.weatherappcd.databinding.ActivityMainBinding
+import com.example.weatherappcd.localDatabase.WeatherRoomDatabase
 import com.example.weatherappcd.utils.CommonUtils.getAddressFromLocation
+import com.example.weatherappcd.utils.CommonUtils.isInternetAvailable
 import com.example.weatherappcd.utils.InternetConnectionCallback
 import com.example.weatherappcd.utils.LottieProgressDialog
-import com.example.weatherappcd.utils.WeatherTypeSealed.Companion.fromWMO
+import com.example.weatherappcd.utils.WeatherTypeUtil
+import com.example.weatherappcd.view.adapters.DailyWeatherAdapter
+import com.example.weatherappcd.view.model.WeatherInfo
+import com.example.weatherappcd.view.model.WeatherMappers
 import com.example.weatherappcd.viewModel.ViewModelHome
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -38,29 +43,33 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 
 const val MAIN_PREFERENCE = "CLOUD_DESTINATION"
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityMainBinding
     private val sharedPref: SharedPreferences by lazy {
         getSharedPreferences(
-            MAIN_PREFERENCE,
-            Context.MODE_PRIVATE
+            MAIN_PREFERENCE, Context.MODE_PRIVATE
         )
     }
     private var splashScreenBoolean = true
-
     private lateinit var connectivityManager: ConnectivityManager
     private lateinit var internetConnectionCallback: InternetConnectionCallback
-
     private val viewModelHome: ViewModelHome by viewModels()
-
+    private val database by lazy { WeatherRoomDatabase.getDatabase(applicationContext) }
     private lateinit var progressDialog: LottieProgressDialog
-
     private var lat = 0.0
     private var lon = 0.0
 
@@ -74,6 +83,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     //Location permission request process
     private var requestPermissionLauncher: ActivityResultLauncher<Array<String>>? = null
+
+    private var dailyWeatherAdapter: DailyWeatherAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,17 +102,76 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         handleLocation()
         initializeView()
+        lifecycleScope.launch(Dispatchers.IO) {
+            withContext(Dispatchers.Default) {
+                if (database != null && database.getWeatherHourlyDao() != null && database.getWeatherHourlyDao()
+                        .getAllWeatherHourly() != null && database.getWeatherHourlyDao()
+                        .getAllWeatherHourly().hourly != null
+                ) {
+                    val values = WeatherMappers.toWeatherInfo(
+                        database.getWeatherHourlyDao().getAllWeatherHourly().hourly!!
+                    )
+                    withContext(Dispatchers.Main) {
+                        setWidgetValues(values)
+                    }
+                }
+            }
+        }
         setonClick()
         observers()
         handleConnection()
     }
+
+    @SuppressLint("SetTextI18n")
+    private fun setWidgetValues(values: WeatherInfo?) {
+        if (values != null) {
+            val currentWeather = values.currentWeather ?: null
+            val weatherByDays = values.weatherPerDay ?: null
+
+            if (!weatherByDays.isNullOrEmpty() && dailyWeatherAdapter != null) {
+                dailyWeatherAdapter?.setDailyWeatherData(
+                    weatherByDays[0]?.toMutableList() ?: mutableListOf()
+                )
+            }
+            if (currentWeather != null) {
+                if (currentWeather.weatherTypes != null) {
+                    if (currentWeather.weatherTypes.weatherDesc.isNotEmpty()) {
+                        binding.weatherStatus.text = currentWeather.weatherTypes.weatherDesc
+                    }
+                    if (WeatherTypeUtil.getWeatherAnimation(currentWeather.weatherCode) != null) {
+                        binding.weatherAnimation.setAnimation(
+                            WeatherTypeUtil.getWeatherAnimation(
+                                currentWeather.weatherCode
+                            )
+                        )
+                        binding.weatherAnimation.playAnimation()
+                    }
+                    if (currentWeather.time != null) {
+                        binding.weatherDate.text = currentWeather.time.format(
+                            DateTimeFormatter.ofPattern(
+                                "E MMM d | h:mm a",
+                                Locale.getDefault()
+                            )
+                        )
+                    }
+                    if (currentWeather.temperature.isNotEmpty()) {
+                        binding.weatherTemp.text = "${currentWeather.temperature}°C"
+                    }
+                    binding.humidityTextView.text = "${currentWeather.humidity}%" ?: "N/A"
+                    binding.windTextView.text = "${currentWeather.windSpeed} km/h" ?: "N/A"
+                    binding.seaLevelTextView.text = "${currentWeather.pressure}hpa" ?: "N/A"
+                }
+            }
+        }
+    }
+
 
     override fun onResume() {
         super.onResume()
         if (hasLocationPhonePermission()) {
             startLocationUpdates()
         } else {
-            showSettingsDialog()
+            requestLocationPermission()
         }
         showLocationGPSonDialog()
     }
@@ -127,18 +197,29 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 if (lat != 0.0 || lon != 0.0) {
                     viewModelHome.fetchWeatherData(lat, lon)
                 }
+            } else {
+                Snackbar.make(
+                    binding.root, getString(R.string.internet_not_available), Snackbar.LENGTH_LONG
+                ).setAction("Check") {
+                    val intent = Intent(Settings.ACTION_WIRELESS_SETTINGS)
+                    startActivity(intent)
+                }.show()
             }
+        }
+
+        if (!hasLocationPhonePermission()) {
+            showSettingsDialog()
         }
     }
 
+    @Suppress("DEPRECATION")
     private fun handleStatusBar() {
         // Set the status bar color as transparent
         window.statusBarColor = Color.TRANSPARENT
         //FLAG_FULLSCREEN
         window.requestFeature(Window.FEATURE_NO_TITLE)
         window.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
+            WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
     }
 
@@ -155,24 +236,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             titleVisible = null,
             okayButtonVisibility = true
         )
+        dailyWeatherAdapter = DailyWeatherAdapter(this@MainActivity)
+        binding.weatherCurrentDateRecycler.adapter = dailyWeatherAdapter
     }
 
     private fun observers() {
         viewModelHome.weatherData.observe(this) {
-
-            binding.weatherDate.text = it.hourly?.time?.get(0) ?: ""
-            val check = fromWMO(it.hourly?.weatherCode?.get(0) ?: 0)
-            binding.weatherStatus.text = check.weatherDesc
-
-            binding.weatherAnimation.setAnimation(
-                R.raw.rainy_weather
-            )
-            binding.weatherAnimation.playAnimation()
-
+            if (it != null && it.hourly != null) {
+                val values = WeatherMappers.toWeatherInfo(it.hourly!!)
+                setWidgetValues(values)
+            }
         }
-
         viewModelHome.throwableData.observe(this) {
-
+            Snackbar.make(binding.root, it.message ?: "", Snackbar.LENGTH_LONG).show()
         }
     }
 
@@ -189,10 +265,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.futureDays -> {
-                val intent = Intent(this@MainActivity, WeatherDaysActivity::class.java).apply {
-
+                Intent(this@MainActivity, WeatherDaysActivity::class.java).apply {
+                    startActivity(this)
                 }
-                startActivity(intent)
             }
 
             R.id.weatherLocation -> {
@@ -207,9 +282,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         //Location
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this@MainActivity)
 
-        locationRequest = LocationRequest.Builder(Priority.PRIORITY_LOW_POWER, 30000)
-            .setWaitForAccurateLocation(false)
-            .build()
+        locationRequest = LocationRequest.Builder(Priority.PRIORITY_BALANCED_POWER_ACCURACY, 60000)
+            .setWaitForAccurateLocation(false).build()
 
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
@@ -230,8 +304,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                             lat = locationResult.lastLocation!!.latitude
                             lon = locationResult.lastLocation!!.longitude
                             binding.weatherLocation.text = getAddressFromLocation(
-                                this@MainActivity,
-                                locationResult.lastLocation!!
+                                this@MainActivity, locationResult.lastLocation!!
                             )
                         }
                     } else if (locationResult.lastLocation != null) {
@@ -241,8 +314,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                             getAddressFromLocation(this@MainActivity, locationResult.lastLocation!!)
                     }
                 }
-
-                viewModelHome.fetchWeatherData(lat, lon)
+                if (isInternetAvailable(this@MainActivity)) {
+                    viewModelHome.fetchWeatherData(lat, lon)
+                }
             }
         }
 
@@ -264,20 +338,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun startLocationUpdates() {
         if (checkSelfPermission(
-                this@MainActivity,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-            &&
-            checkSelfPermission(
-                this@MainActivity,
-                Manifest.permission.ACCESS_COARSE_LOCATION
+                this@MainActivity, Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(
+                this@MainActivity, Manifest.permission.ACCESS_COARSE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             fusedLocationClient.requestLocationUpdates(
                 locationRequest, locationCallback, null
             )
         } else {
-            requestLocationPermission()
+            showSettingsDialog()
         }
     }
 
@@ -325,7 +395,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                         dialog.dismiss()
                     }
                 }.create()
-
                 builderGPS?.show()
             }
         }
@@ -344,17 +413,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             val gmmIntentUri = Uri.parse("http://maps.google.com/maps?q=$lat,$lon")
             val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
             mapIntent.setPackage("com.google.android.apps.maps")
-            mapIntent.resolveActivity(packageManager)?.let {
-                startActivity(mapIntent)
-            }
+            mapIntent.resolveActivity(packageManager)
+            startActivity(mapIntent)
         }
     }
 
     private fun requestLocationPermission() {
         requestPermissionLauncher?.launch(
             arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
+                Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION
             )
         )
     }

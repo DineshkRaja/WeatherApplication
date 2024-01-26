@@ -1,6 +1,10 @@
 <resources>
-    <string name="app_name">Weather App CD</string>
+    <string name="app_name">Weather App</string>
     <string name="today">Today</string>
     <string name="next_7_days"><![CDATA[Next 7 days >]]></string>
-    <string name="loading">Loading...</string>
+    <string name="loading">Loading…</string>
+    <string name="internet_not_available">Internet not available. Please check your connection.</string>
+    <string name="good_day">Good Day</string>
+    <string name="n_a">N/A</string>
+    <string name="zero_temp">0°C</string>
 </resources>

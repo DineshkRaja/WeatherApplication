@@ -82,10 +82,10 @@ class LottieProgressDialog(
             }
         }
 
-        if (okayButtonVisibility){
+        if (okayButtonVisibility) {
             titleTextView.visibility = View.GONE
             okayTextView.visibility = View.VISIBLE
-            okayTextView.setOnClickListener{
+            okayTextView.setOnClickListener {
                 this.dismiss()
             }
         }
