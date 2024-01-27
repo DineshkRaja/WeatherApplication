@@ -55,5 +55,14 @@ object WeatherMappers {
         }
         return null
     }
+
+    fun toWeatherObject(weatherList: List<WeatherModelClass>, position : Int) : WeatherModelClass{
+        val now = LocalDateTime.now()
+        val weatherModelClass = weatherList.find {
+            val hour = if (now.minute < 30) now.hour else now.hour + 1
+            it.time.hour == if (hour > 23) 0 else hour
+        } ?: return weatherList[position]
+        return weatherModelClass
+    }
 }
 

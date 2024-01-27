@@ -9,7 +9,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.weatherappcd.databinding.ItemWeatherDaysBinding
+import com.example.weatherappcd.view.model.WeatherMappers.toWeatherObject
 import com.example.weatherappcd.view.model.WeatherModelClass
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -60,10 +62,10 @@ class WeeklyWeatherAdapter(
     inner class ViewHolder(private val binding: ItemWeatherDaysBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(weatherList: List<WeatherModelClass>) {
-            with(weatherList[adapterPosition]) {
+            with(toWeatherObject(weatherList, adapterPosition)) {
                 binding.futureDate.text =
                     time.format(DateTimeFormatter.ofPattern("E", Locale.getDefault()))
-                binding.futureTemp.text = "${temperature}°C"
+                binding.futureTemp.text = "${this?.temperature}°C"
                 binding.futureStatus.text = weatherTypes.weatherDesc ?: "N/A"
                 binding.futureHumidity.text = "${humidity}%"
                 Glide.with(context).load(weatherTypes.iconRes)

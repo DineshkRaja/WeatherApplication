@@ -68,8 +68,13 @@ class WeatherDaysActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun setWidgetValues(currentWeather: WeatherModelClass) {
         if (currentWeather.time != null) {
-            bindingForWeatherDays.selectedDate.text =
-                currentWeather.time.format(DateTimeFormatter.ofPattern("EEEE", Locale.getDefault()))
+            //bindingForWeatherDays.selectedDate.text = currentWeather.time.format(DateTimeFormatter.ofPattern("EEEE", Locale.getDefault()))
+            bindingForWeatherDays.selectedDate.text = currentWeather.time.format(
+                DateTimeFormatter.ofPattern(
+                    "EEEE\nh:mm a",
+                    Locale.getDefault()
+                )
+            )
         }
         if (!currentWeather.temperature.isNullOrEmpty()) {
             bindingForWeatherDays.selectedTemp.text = "${currentWeather.temperature}°C"

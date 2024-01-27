@@ -132,6 +132,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 dailyWeatherAdapter?.setDailyWeatherData(
                     weatherByDays[0]?.toMutableList() ?: mutableListOf()
                 )
+                if (weatherByDays != null && weatherByDays[0] != null && currentWeather != null && weatherByDays[0]?.indexOf(
+                        currentWeather
+                    ) != null && weatherByDays[0]?.indexOf(currentWeather) != -1
+                ) {
+                    binding.weatherCurrentDateRecycler.scrollToPosition(
+                        weatherByDays[0]?.indexOf(currentWeather)!!
+                    )
+                }
             }
             if (currentWeather != null) {
                 if (currentWeather.weatherTypes != null) {

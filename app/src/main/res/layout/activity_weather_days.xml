@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:paddingTop="40dp"
     android:background="@color/background_color"
+    android:paddingTop="40dp"
     tools:context=".view.WeatherDaysActivity">
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -14,8 +14,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:background="@drawable/gradient_background_round"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -110,17 +110,17 @@
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:background="@drawable/sea"
                     android:layout_gravity="center"
+                    android:background="@drawable/sea"
                     android:backgroundTint="@color/white" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/seaLevelText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_marginTop="5dp"
                     android:text="@string/n_a"
-                    android:layout_gravity="center"
                     android:textColor="@color/white"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -138,17 +138,17 @@
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="45dp"
                     android:layout_height="45dp"
-                    android:background="@drawable/wind"
                     android:layout_gravity="center"
+                    android:background="@drawable/wind"
                     android:backgroundTint="@color/white" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/windText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_marginTop="5dp"
                     android:text="@string/n_a"
-                    android:layout_gravity="center"
                     android:textColor="@color/white"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -166,17 +166,17 @@
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="45dp"
                     android:layout_height="45dp"
-                    android:background="@drawable/humidity"
                     android:layout_gravity="center"
+                    android:background="@drawable/humidity"
                     android:backgroundTint="@color/white" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/humidityText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_marginTop="5dp"
                     android:text="@string/n_a"
-                    android:layout_gravity="center"
                     android:textColor="@color/white"
                     android:textStyle="bold" />
 
@@ -194,18 +194,17 @@
         android:layout_height="0dp"
         android:layout_marginTop="12dp"
         android:clipToPadding="false"
-        android:paddingBottom="15dp"
+        android:orientation="vertical"
         android:paddingStart="6dp"
         android:paddingEnd="6dp"
-        tools:itemCount="7"
+        android:paddingBottom="15dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        android:orientation="vertical"
-        tools:listitem="@layout/item_weather_days"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
-
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+        tools:itemCount="7"
+        tools:listitem="@layout/item_weather_days" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
