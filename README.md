@@ -1,19 +1,18 @@
 Weather App: 
-1. Created weather app using https://open-meteo.com/en/docs
-2. Get weather forecast for a current location using GPS
-3. Get a forecast for the next 7 days
-4. Cache the API data to the database and load it while the user is offline and sync it when he is online
-5. More features added
+1. **Weather App Creation:** The weather app has been developed using the Open Meteo API, providing accurate and up-to-date weather information.
+2. **GPS Integration:** Implemented GPS functionality to fetch weather data for the user's current location, ensuring real-time updates.
+3. **7-Day Forecast:** Developed a feature that displays the weather forecast for the next 7 days, allowing users to plan.
+4. **Data Caching:** Utilized the Room Database for efficient data caching. The app seamlessly loads cached data when offline and syncs it with the server when online.
+5. **Additional Features:** Today's hourly weather status list is shown and the 7-day weather detail view is implemented.
 
-
-Tech stacks to use: 
-1. Language - Kotlin 
-2. Design Pattern - MVVM
-3. Local Database - Room Database
-4. Networking - Retrofit
-5. Image caching library - Glide
-6. UI - XML
-7. Dependency injection - Dagger Hilt   
+Tech Stack:
+1. Language: Kotlin
+2. Database: Room
+3. Network Calls: Retrofit
+4. Image Caching: Glide
+5. Layout Markup: XML
+6.Dependency Injection: Dagger-Hilt
+7. Architecture: MVVM
 
  
 
