@@ -11,7 +11,7 @@ Tech Stack:
 3. Network Calls: Retrofit
 4. Image Caching: Glide
 5. Layout Markup: XML
-6.Dependency Injection: Dagger-Hilt
+6. Dependency Injection: Dagger-Hilt
 7. Architecture: MVVM
 
  
